@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/innvtseeds/wdic-server/internal/config"
 	"github.com/joho/godotenv"
 )
 
@@ -15,6 +16,8 @@ func main() {
 	http.HandleFunc("/devtest", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Server set up and running as expected")
 	})
+
+	config.LoadDBConfig()
 
 	err := godotenv.Load()
 	if err != nil {
