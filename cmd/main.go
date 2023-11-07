@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -13,8 +16,18 @@ func main() {
 		fmt.Fprintf(w, "Server set up and running as expected")
 	})
 
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
 	s := &http.Server{
-		Addr: ":8080",
+		Addr: ":" + port,
 		// Handler:        myHandler,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
