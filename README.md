@@ -3,4 +3,7 @@
 
 ## Start
 
-`go run cmd/main.go`
+```shell
+go mod download
+go run cmd/main.go
+```
