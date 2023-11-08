@@ -1,21 +1,21 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/innvtseeds/wdic-server/internal/config"
+	"github.com/innvtseeds/wdic-server/internal/routes"
+
 	"github.com/joho/godotenv"
 )
 
 func main() {
 
-	http.HandleFunc("/devtest", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Server set up and running as expected")
-	})
+	// Set up routes from routes.go
+	routes.SetupRoutes()
 
 	config.LoadDBConfig()
 
