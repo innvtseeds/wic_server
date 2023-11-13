@@ -6,8 +6,8 @@ import (
 	"os"
 	"time"
 
+	api "github.com/innvtseeds/wdic-server/internal/api/routes"
 	"github.com/innvtseeds/wdic-server/internal/config"
-	"github.com/innvtseeds/wdic-server/internal/routes"
 
 	"github.com/joho/godotenv"
 )
@@ -15,7 +15,7 @@ import (
 func main() {
 
 	// Set up routes from routes.go
-	routes.SetupRoutes()
+	api.SetupRoutes()
 
 	config.LoadDBConfig()
 
