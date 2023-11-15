@@ -12,3 +12,8 @@ type GetUser_RequestDTO struct {
 type GetUser_ResponseDTO struct {
 	User *model.User
 }
+
+type CreateUser_RequestBody struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}

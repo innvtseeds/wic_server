@@ -4,15 +4,15 @@ import (
 	"errors"
 
 	"github.com/innvtseeds/wdic-server/internal/config"
-	dto "github.com/innvtseeds/wdic-server/internal/dto/handler/user"
 	userRepoDTO "github.com/innvtseeds/wdic-server/internal/dto/repository/user"
+	dto "github.com/innvtseeds/wdic-server/internal/dto/service/user"
 	"github.com/innvtseeds/wdic-server/internal/model"
 	"github.com/innvtseeds/wdic-server/internal/repository"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func CreateUserService(user *dto.CreateUserPayload) (*model.User, error) {
+func CreateUserService(user *dto.UserCreate_RequestBody) (*model.User, error) {
 
 	if user.Email == "" || user.Password == "" {
 		return nil, errors.New("Parameters Missing")

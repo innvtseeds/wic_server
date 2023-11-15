@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 
 	userRepoDTO "github.com/innvtseeds/wdic-server/internal/dto/repository/user"
@@ -27,11 +28,12 @@ func NewUserRepository(db *mongo.Database) *UserRepository {
 
 // Create Logic
 func (r *UserRepository) Create(user *model.User) (*model.User, error) {
+	fmt.Println("USER REPOSITORY :: INSERT BODY ::", user)
 	result, err := r.collection.InsertOne(context.Background(), user)
 	if err != nil {
 		//* @sreerag: NEED TO CHECK IF LOG.FATAL EXITS THE PROGRAM
 		//* IF SO THIS NEEDS TO BE AVOIDED AND INSTEAD JUST HAVE LOGGING BE DONE
-		log.Fatal("ERROR IN USER INSERT", err)
+		fmt.Println("ERROR IN USER INSERT", err)
 		return nil, errors.New("Insert to Collection failed")
 	}
 
