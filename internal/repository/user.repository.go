@@ -5,6 +5,8 @@ import (
 	"errors"
 	"log"
 
+	userRepoDTO "github.com/innvtseeds/wdic-server/internal/dto/repository/user"
+	sharedDTO "github.com/innvtseeds/wdic-server/internal/dto/shared"
 	"github.com/innvtseeds/wdic-server/internal/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -85,23 +87,18 @@ func (r *UserRepository) Delete(userId *primitive.ObjectID) (*string, error) {
 
 }
 
-type GetUserArgsStruct struct {
-	id    primitive.ObjectID
-	email string
-}
-
 // Get One
-func (r *UserRepository) Get(identifier *GetUserArgsStruct) (*model.User, error) {
-	if identifier.email == "" && identifier.id == primitive.NilObjectID {
+func (r *UserRepository) Get(identifier *userRepoDTO.GetUserArgsStruct) (*model.User, error) {
+	if identifier.Email == "" && identifier.Id == primitive.NilObjectID {
 		return nil, errors.New("missing params :: need either id or email")
 	}
 
 	var where bson.M
 
-	if identifier.id != primitive.NilObjectID {
-		where = bson.M{"_id": identifier.id}
-	} else if identifier.email != "" {
-		where = bson.M{"email": identifier.email}
+	if identifier.Id != primitive.NilObjectID {
+		where = bson.M{"_id": identifier.Id}
+	} else if identifier.Email != "" {
+		where = bson.M{"email": identifier.Email}
 	}
 
 	var user model.User
@@ -116,23 +113,17 @@ func (r *UserRepository) Get(identifier *GetUserArgsStruct) (*model.User, error)
 
 }
 
-type PaginationStruct struct {
-	page     int64
-	pageSize int64
-	search   string
-}
-
 // Get ALl
-func (r *UserRepository) GetAll(paginationValues *PaginationStruct) ([]*model.User, error) {
+func (r *UserRepository) GetAll(paginationValues *sharedDTO.PaginationStruct) ([]*model.User, error) {
 
 	findOptions := options.Find()
-	findOptions.SetSkip((paginationValues.page - 1) * paginationValues.pageSize)
-	findOptions.SetLimit(paginationValues.pageSize)
+	findOptions.SetSkip((paginationValues.Page - 1) * paginationValues.PageSize)
+	findOptions.SetLimit(paginationValues.PageSize)
 
 	var where bson.M
 
-	if paginationValues.search != "" {
-		where = bson.M{"email": paginationValues.search}
+	if paginationValues.Search != "" {
+		where = bson.M{"email": paginationValues.Search}
 	}
 
 	cursor, err := r.collection.Find(context.Background(), where, findOptions)
