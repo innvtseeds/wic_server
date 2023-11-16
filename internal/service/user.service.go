@@ -19,14 +19,14 @@ func CreateUserService(user *dto.UserCreate_RequestBody) (*model.User, error) {
 
 	if user.Email == "" || user.Password == "" {
 		myLogger.Error("SERVICE_ERROR :: ", "PARAMETER_MISSING :: ", user.Email, user.Password)
-		return nil, errors.New("Parameters Missing")
+		return nil, errors.New("parameters missing")
 	}
 
 	// hash the password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		myLogger.Error("SERVICE_ERROR :: Password Hashing Failed")
-		return nil, errors.New("Password Hashing Failed")
+		return nil, errors.New("password hashing failed")
 	}
 
 	var createUserModelDTO model.User = model.User{

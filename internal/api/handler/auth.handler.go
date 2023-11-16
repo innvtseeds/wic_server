@@ -9,6 +9,7 @@ import (
 	userServiceDTO "github.com/innvtseeds/wdic-server/internal/dto/service/user"
 	"github.com/innvtseeds/wdic-server/internal/service"
 	lib "github.com/innvtseeds/wdic-server/library/logger"
+	apiResponse "github.com/innvtseeds/wdic-server/library/standardization"
 )
 
 var myLogger = lib.NewLogger()
@@ -16,18 +17,14 @@ var myLogger = lib.NewLogger()
 func Register(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		myLogger.Error("REQUEST_BODY_ERROR :: ", err)
-		http.Error(w, "Error in ready request body", http.StatusBadRequest)
-		return
+		apiResponse.RequestBodyError(w, err)
 	}
 
 	var requestBody userHandlerDTO.CreateUser_RequestBody
 
 	err = json.Unmarshal(body, &requestBody)
 	if err != nil {
-		myLogger.Error("UNMARHALING_ERROR :: ", err)
-		http.Error(w, "Error unmashalling JSON", http.StatusBadRequest)
-		return
+		apiResponse.UnmarshalError(w, err)
 	}
 
 	createUserBody := userServiceDTO.UserCreate_RequestBody{
@@ -40,15 +37,10 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	response, err := service.CreateUserService(&createUserBody)
 	if err != nil {
 
-		myLogger.Error("SERVICE_ERROR :: ", err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+		apiResponse.ServiceResponseError(w, err)
 	}
 
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/json")
-
-	json.NewEncoder(w).Encode(response)
+	apiResponse.StandardResponse(w, response)
 }
 
 // func Login(w http.ResponseWriter, r *http.Request) {

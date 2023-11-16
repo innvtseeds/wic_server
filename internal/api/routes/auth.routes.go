@@ -14,7 +14,7 @@ func AuthRoutes() {
 func register(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "POST":
-		api.CreateUserHandler(w, r)
+		api.Register(w, r)
 	default:
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 	}
