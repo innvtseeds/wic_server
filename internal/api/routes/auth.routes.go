@@ -7,8 +7,8 @@ import (
 )
 
 func AuthRoutes() {
-	http.HandleFunc("auth/register", register)
-	http.HandleFunc("auth/login", login)
+	http.HandleFunc("/auth/register", register)
+	http.HandleFunc("/auth/login", login)
 }
 
 func register(w http.ResponseWriter, r *http.Request) {

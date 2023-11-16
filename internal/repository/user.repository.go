@@ -3,17 +3,19 @@ package repository
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log"
 
 	userRepoDTO "github.com/innvtseeds/wdic-server/internal/dto/repository/user"
 	sharedDTO "github.com/innvtseeds/wdic-server/internal/dto/shared"
 	"github.com/innvtseeds/wdic-server/internal/model"
+	"github.com/innvtseeds/wdic-server/library/logger"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
+
+var myLogger = logger.NewLogger()
 
 type UserRepository struct {
 	collection *mongo.Collection
@@ -28,12 +30,11 @@ func NewUserRepository(db *mongo.Database) *UserRepository {
 
 // Create Logic
 func (r *UserRepository) Create(user *model.User) (*model.User, error) {
-	fmt.Println("USER REPOSITORY :: INSERT BODY ::", user)
+	myLogger.Info("USER REPOSITORY :: INSERT BODY ::", user)
 	result, err := r.collection.InsertOne(context.Background(), user)
 	if err != nil {
-		//* @sreerag: NEED TO CHECK IF LOG.FATAL EXITS THE PROGRAM
-		//* IF SO THIS NEEDS TO BE AVOIDED AND INSTEAD JUST HAVE LOGGING BE DONE
-		fmt.Println("ERROR IN USER INSERT", err)
+
+		myLogger.Error("ERROR IN USER INSERT", err)
 		return nil, errors.New("Insert to Collection failed")
 	}
 
@@ -63,7 +64,7 @@ func (r *UserRepository) Update(userId *primitive.ObjectID, user *model.User) (*
 
 	_, err := r.collection.UpdateByID(context.Background(), userId, update)
 	if err != nil {
-		log.Fatal("User update", err)
+		myLogger.Error("User update", err)
 		return nil, errors.New("Update Query Failed")
 	}
 
@@ -141,7 +142,7 @@ func (r *UserRepository) GetAll(paginationValues *sharedDTO.PaginationStruct) ([
 		var user model.User
 		err := cursor.Decode(&user)
 		if err != nil {
-			log.Println("ERROR IN DECODING USER", err)
+			myLogger.Error("ERROR IN DECODING USER", err)
 			continue
 		}
 		users = append(users, &user)

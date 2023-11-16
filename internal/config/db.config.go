@@ -2,15 +2,17 @@ package config
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"time"
 
+	"github.com/innvtseeds/wdic-server/library/logger"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
+
+var myLogger = logger.NewLogger()
 
 // holds the configuration details
 type MongoDBConfig struct {
@@ -63,10 +65,10 @@ func LoadDBConfig() {
 	connection, err := NewMongoDBConnection(connConfig)
 
 	if err != nil {
-		log.Fatal("Mongo Connection Failed")
+		myLogger.Error("Mongo Connection Failed")
 	}
 
 	if connection.isConnectionSuccess {
-		fmt.Println("MONGO DB SUCCESSFULLY CONNECTED")
+		myLogger.Info("MONGO DB SUCCESSFULLY CONNECTED")
 	}
 }
