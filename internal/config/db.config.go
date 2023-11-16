@@ -6,13 +6,13 @@ import (
 	"os"
 	"time"
 
-	"github.com/innvtseeds/wdic-server/library/logger"
+	lib "github.com/innvtseeds/wdic-server/library/logger"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var myLogger = logger.NewLogger()
+var myLogger = lib.NewLogger()
 
 // holds the configuration details
 type MongoDBConfig struct {

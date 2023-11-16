@@ -8,10 +8,10 @@ import (
 	userHandlerDTO "github.com/innvtseeds/wdic-server/internal/dto/handler/user"
 	userServiceDTO "github.com/innvtseeds/wdic-server/internal/dto/service/user"
 	"github.com/innvtseeds/wdic-server/internal/service"
-	"github.com/innvtseeds/wdic-server/library/logger"
+	lib "github.com/innvtseeds/wdic-server/library/logger"
 )
 
-var myLogger = logger.NewLogger()
+var myLogger = lib.NewLogger()
 
 func Register(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)

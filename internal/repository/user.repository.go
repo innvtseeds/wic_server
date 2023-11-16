@@ -8,14 +8,14 @@ import (
 	userRepoDTO "github.com/innvtseeds/wdic-server/internal/dto/repository/user"
 	sharedDTO "github.com/innvtseeds/wdic-server/internal/dto/shared"
 	"github.com/innvtseeds/wdic-server/internal/model"
-	"github.com/innvtseeds/wdic-server/library/logger"
+	lib "github.com/innvtseeds/wdic-server/library/logger"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var myLogger = logger.NewLogger()
+var myLogger = lib.NewLogger()
 
 type UserRepository struct {
 	collection *mongo.Collection
