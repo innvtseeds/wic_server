@@ -4,24 +4,29 @@ import (
 	"errors"
 
 	"github.com/innvtseeds/wdic-server/internal/config"
-	dto "github.com/innvtseeds/wdic-server/internal/dto/handler/user"
 	userRepoDTO "github.com/innvtseeds/wdic-server/internal/dto/repository/user"
+	dto "github.com/innvtseeds/wdic-server/internal/dto/service/user"
 	"github.com/innvtseeds/wdic-server/internal/model"
 	"github.com/innvtseeds/wdic-server/internal/repository"
+	lib "github.com/innvtseeds/wdic-server/library/logger"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func CreateUserService(user *dto.CreateUserPayload) (*model.User, error) {
+var myLogger = lib.NewLogger()
+
+func CreateUserService(user *dto.UserCreate_RequestBody) (*model.User, error) {
 
 	if user.Email == "" || user.Password == "" {
-		return nil, errors.New("Parameters Missing")
+		myLogger.Error("SERVICE_ERROR :: ", "PARAMETER_MISSING :: ", user.Email, user.Password)
+		return nil, errors.New("parameters missing")
 	}
 
 	// hash the password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return nil, errors.New("Password Hashing Failed")
+		myLogger.Error("SERVICE_ERROR :: Password Hashing Failed")
+		return nil, errors.New("password hashing failed")
 	}
 
 	var createUserModelDTO model.User = model.User{
@@ -32,6 +37,7 @@ func CreateUserService(user *dto.CreateUserPayload) (*model.User, error) {
 	createdUser, err := repository.NewUserRepository(&config.DbConnection).Create(&createUserModelDTO)
 
 	if err != nil {
+		myLogger.Error("SERVICE_ERROR :: ", "REPO_RESPONSE_ERROR :::", err)
 		return nil, err
 	}
 
