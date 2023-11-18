@@ -1,3 +1,4 @@
+.DEFAULT_GOAL := run-dev
 
 run-dev:
 	go run cmd/main.go
