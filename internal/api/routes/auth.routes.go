@@ -24,7 +24,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 func login(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "POST":
-		//login pending
+		api.Login(w, r)
 	default:
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 	}

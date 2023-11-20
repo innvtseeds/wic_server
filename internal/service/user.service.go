@@ -8,12 +8,9 @@ import (
 	dto "github.com/innvtseeds/wdic-server/internal/dto/service/user"
 	"github.com/innvtseeds/wdic-server/internal/model"
 	"github.com/innvtseeds/wdic-server/internal/repository"
-	lib "github.com/innvtseeds/wdic-server/library/logger"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 )
-
-var myLogger = lib.NewLogger()
 
 func CreateUserService(user *dto.UserCreate_RequestBody) (*model.User, error) {
 

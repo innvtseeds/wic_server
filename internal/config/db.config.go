@@ -6,13 +6,13 @@ import (
 	"os"
 	"time"
 
-	lib "github.com/innvtseeds/wdic-server/library/logger"
+	customLogger "github.com/innvtseeds/wdic-server/library/logger"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var myLogger = lib.NewLogger()
+var myLogger = customLogger.NewLogger()
 
 // holds the configuration details
 type MongoDBConfig struct {
@@ -55,7 +55,8 @@ func LoadDBConfig() {
 	connectionUrl := os.Getenv("DB_URL")
 
 	if connectionUrl == "" {
-		log.Fatal("NO DB URL")
+		myLogger.Error("NO DB URL")
+		panic("No DB URL")
 	}
 
 	connConfig := &MongoDBConfig{
