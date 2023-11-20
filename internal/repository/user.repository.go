@@ -8,14 +8,14 @@ import (
 	userRepoDTO "github.com/innvtseeds/wdic-server/internal/dto/repository/user"
 	sharedDTO "github.com/innvtseeds/wdic-server/internal/dto/shared"
 	"github.com/innvtseeds/wdic-server/internal/model"
-	lib "github.com/innvtseeds/wdic-server/library/logger"
+	customLogger "github.com/innvtseeds/wdic-server/library/logger"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var myLogger = lib.NewLogger()
+var myLogger = customLogger.NewLogger()
 
 type UserRepository struct {
 	collection *mongo.Collection
@@ -23,6 +23,7 @@ type UserRepository struct {
 
 func NewUserRepository(db *mongo.Database) *UserRepository {
 	collection := db.Collection("user")
+	myLogger.Info("USER REPO INITIATED")
 	return &UserRepository{
 		collection: collection,
 	}

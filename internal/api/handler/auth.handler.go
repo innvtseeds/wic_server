@@ -5,14 +5,15 @@ import (
 	"io"
 	"net/http"
 
-	userHandlerDTO "github.com/innvtseeds/wdic-server/internal/dto/handler/user"
+	authHandlerDTO "github.com/innvtseeds/wdic-server/internal/dto/handler/auth"
+	authServiceDTO "github.com/innvtseeds/wdic-server/internal/dto/service/auth"
 	userServiceDTO "github.com/innvtseeds/wdic-server/internal/dto/service/user"
 	"github.com/innvtseeds/wdic-server/internal/service"
-	lib "github.com/innvtseeds/wdic-server/library/logger"
+	customLogger "github.com/innvtseeds/wdic-server/library/logger"
 	apiResponse "github.com/innvtseeds/wdic-server/library/standardization"
 )
 
-var myLogger = lib.NewLogger()
+var myLogger = customLogger.NewLogger()
 
 func Register(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
@@ -20,7 +21,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		apiResponse.RequestBodyError(w, err)
 	}
 
-	var requestBody userHandlerDTO.CreateUser_RequestBody
+	var requestBody authHandlerDTO.Register_RequestBody
 
 	err = json.Unmarshal(body, &requestBody)
 	if err != nil {
@@ -43,10 +44,32 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	apiResponse.StandardResponse(w, response)
 }
 
-// func Login(w http.ResponseWriter, r *http.Request) {
-// 	body, err := io.ReadAll(r.Body)
-// 	if err != nil {
-// 		http.Error(w, "Error in ready request body", http.StatusBadRequest)
-// 		return
-// 	}
-// }
+func Login(w http.ResponseWriter, r *http.Request) {
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		apiResponse.RequestBodyError(w, err)
+		return
+	}
+
+	var requestBody authHandlerDTO.Login_RequestBody
+
+	err = json.Unmarshal(body, &requestBody)
+	if err != nil {
+		apiResponse.UnmarshalError(w, err)
+	}
+
+	loginUserBody := authHandlerDTO.Login_RequestBody{
+		Email:    requestBody.Email,
+		Password: requestBody.Password,
+	}
+
+	myLogger.Info("SERVICE_PAYLAOD :: LOGIN :: ", loginUserBody)
+	user, err := service.Login((*authServiceDTO.Login_ServiceRequestBody)(&loginUserBody))
+
+	if err != nil {
+		apiResponse.ServiceResponseError(w, err)
+	}
+
+	apiResponse.StandardResponse(w, user)
+
+}

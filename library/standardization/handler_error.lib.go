@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 
-	lib "github.com/innvtseeds/wdic-server/library/logger"
+	customLogger "github.com/innvtseeds/wdic-server/library/logger"
 )
 
-var myLogger = lib.NewLogger()
+var myLogger = customLogger.NewLogger()
 
 // ErrorResponse represents a standardized error response structure.
 type ErrorResponse struct {
