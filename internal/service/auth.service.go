@@ -4,12 +4,36 @@ import (
 	"github.com/innvtseeds/wdic-server/internal/config"
 	userRepoDTO "github.com/innvtseeds/wdic-server/internal/dto/repository/user"
 	loginServiceDto "github.com/innvtseeds/wdic-server/internal/dto/service/auth"
+	dto "github.com/innvtseeds/wdic-server/internal/dto/service/user"
 	"github.com/innvtseeds/wdic-server/internal/repository"
+	"github.com/innvtseeds/wdic-server/library/jwt"
 	customLogger "github.com/innvtseeds/wdic-server/library/logger"
 	"golang.org/x/crypto/bcrypt"
 )
 
 var myLogger = customLogger.NewLogger()
+
+func Register(user *dto.UserCreate_RequestBody) (*string, error) {
+
+	response, err := CreateUserService(user)
+	if err != nil {
+		return nil, err
+	}
+
+	tokenPayload := map[string]interface{}{
+		"Id":    response.Id,
+		"Email": response.Email,
+	}
+
+	token, err := jwt.GenerateToken(tokenPayload)
+	if err != nil {
+		myLogger.Error("SERVICE :: JWT TOKEN GENERATION FAILED :: ", err)
+		return nil, err
+	}
+	// return the user is password verified
+	return token, nil
+
+}
 
 func Login(payload *loginServiceDto.Login_ServiceRequestBody) (*string, error) {
 
@@ -37,7 +61,19 @@ func Login(payload *loginServiceDto.Login_ServiceRequestBody) (*string, error) {
 		return nil, err
 	}
 
+	myLogger.Info("SERVICE :: LOGIN :: USER :: ", user)
+
+	tokenPayload := map[string]interface{}{
+		"Id":    user.Id,
+		"Email": user.Email,
+	}
+
+	token, err := jwt.GenerateToken(tokenPayload)
+	if err != nil {
+		myLogger.Error("SERVICE :: JWT TOKEN GENERATION FAILED :: ", err)
+		return nil, err
+	}
 	// return the user is password verified
-	return &user.Email, nil
+	return token, nil
 
 }

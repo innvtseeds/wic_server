@@ -9,6 +9,7 @@ import (
 func AuthRoutes() {
 	http.HandleFunc("/auth/register", register)
 	http.HandleFunc("/auth/login", login)
+	http.HandleFunc("/auth/test", test)
 }
 
 func register(w http.ResponseWriter, r *http.Request) {
@@ -25,6 +26,14 @@ func login(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "POST":
 		api.Login(w, r)
+	default:
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+	}
+}
+func test(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "POST":
+		api.Test(w, r)
 	default:
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 	}

@@ -9,6 +9,7 @@ import (
 	authServiceDTO "github.com/innvtseeds/wdic-server/internal/dto/service/auth"
 	userServiceDTO "github.com/innvtseeds/wdic-server/internal/dto/service/user"
 	"github.com/innvtseeds/wdic-server/internal/service"
+	"github.com/innvtseeds/wdic-server/library/jwt"
 	customLogger "github.com/innvtseeds/wdic-server/library/logger"
 	apiResponse "github.com/innvtseeds/wdic-server/library/standardization"
 )
@@ -35,7 +36,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	myLogger.Info("SERVICE_PAYLOAD :: REGISTER :: ", createUserBody)
 
-	response, err := service.CreateUserService(&createUserBody)
+	response, err := service.Register(&createUserBody)
 	if err != nil {
 
 		apiResponse.ServiceResponseError(w, err)
@@ -72,4 +73,35 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	apiResponse.StandardResponse(w, user)
 
+}
+
+func Test(w http.ResponseWriter, r *http.Request) {
+	body, err := io.ReadAll(r.Body)
+
+	if err != nil {
+		apiResponse.RequestBodyError(w, err)
+		return
+	}
+
+	type TestPayload struct {
+		Token string `json:"token"`
+	}
+
+	var requestBody TestPayload
+
+	err = json.Unmarshal(body, &requestBody)
+	if err != nil {
+		apiResponse.UnmarshalError(w, err)
+	}
+
+	myLogger.Info("BODY::", requestBody.Token)
+
+	token, err := jwt.DecodeToken(requestBody.Token)
+
+	if err != nil {
+		myLogger.Error("HANDLER :: AUTH TEST FAILED :: ", err)
+		apiResponse.ServiceResponseError(w, err)
+	}
+
+	apiResponse.StandardResponse(w, token)
 }
