@@ -36,7 +36,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	myLogger.Info("SERVICE_PAYLOAD :: REGISTER :: ", createUserBody)
 
-	response, err := service.CreateUserService(&createUserBody)
+	response, err := service.Register(&createUserBody)
 	if err != nil {
 
 		apiResponse.ServiceResponseError(w, err)
