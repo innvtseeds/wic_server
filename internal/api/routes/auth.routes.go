@@ -1,40 +1,12 @@
 package api
 
 import (
-	"net/http"
-
+	"github.com/gorilla/mux"
 	api "github.com/innvtseeds/wdic-server/internal/api/handler"
 )
 
-func AuthRoutes() {
-	http.HandleFunc("/auth/register", register)
-	http.HandleFunc("/auth/login", login)
-	http.HandleFunc("/auth/test", test)
-}
-
-func register(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "POST":
-		api.Register(w, r)
-	default:
-		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-	}
-}
-
-// Login Function
-func login(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "POST":
-		api.Login(w, r)
-	default:
-		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-	}
-}
-func test(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "POST":
-		api.Test(w, r)
-	default:
-		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-	}
+func AuthRoutes(r *mux.Router) {
+	r.HandleFunc("/auth/register", api.Register).Methods("POST")
+	r.HandleFunc("/auth/login", api.Login).Methods("POST")
+	r.HandleFunc("/auth/test", api.Test).Methods("POST")
 }

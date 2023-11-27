@@ -5,9 +5,11 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	userHandlerDTO "github.com/innvtseeds/wdic-server/internal/dto/handler/user"
 	userServiceDTO "github.com/innvtseeds/wdic-server/internal/dto/service/user"
 	"github.com/innvtseeds/wdic-server/internal/service"
+	apiResponse "github.com/innvtseeds/wdic-server/library/standardization"
 )
 
 func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -42,4 +44,14 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(response)
 
+}
+
+func GetUser(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	userId := vars["userId"]
+
+	myLogger.Info("USERID", userId)
+
+	apiResponse.StandardResponse(w, userId)
 }

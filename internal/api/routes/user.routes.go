@@ -1,21 +1,11 @@
 package api
 
 import (
-	"net/http"
-
+	"github.com/gorilla/mux"
 	api "github.com/innvtseeds/wdic-server/internal/api/handler"
 )
 
-func UserRoutes() {
-	http.HandleFunc("/user", createUser)
-}
-
-// ServerStatus is a function that handles the /devtest route
-func createUser(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "POST":
-		api.CreateUserHandler(w, r)
-	default:
-		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-	}
+func UserRoutes(r *mux.Router) {
+	r.HandleFunc("/user", api.CreateUserHandler).Methods("POST")
+	r.HandleFunc("/user/{userId}", api.GetUser).Methods("GET")
 }
