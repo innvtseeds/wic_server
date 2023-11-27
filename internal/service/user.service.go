@@ -6,6 +6,8 @@ import (
 	"github.com/innvtseeds/wdic-server/internal/config"
 	userRepoDTO "github.com/innvtseeds/wdic-server/internal/dto/repository/user"
 	dto "github.com/innvtseeds/wdic-server/internal/dto/service/user"
+	sharedDto "github.com/innvtseeds/wdic-server/internal/dto/shared"
+
 	"github.com/innvtseeds/wdic-server/internal/model"
 	"github.com/innvtseeds/wdic-server/internal/repository"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -60,4 +62,16 @@ func GetUser(userId primitive.ObjectID, email string) (*model.User, error) {
 	}
 
 	return searchedUser, nil
+}
+
+func GetUsers(pagination *sharedDto.PaginationStruct) ([]*model.User, error) {
+
+	users, err := repository.NewUserRepository(&config.DbConnection).GetAll(pagination)
+
+	if err != nil {
+		myLogger.Error("ERROR IN USER SERVICE :: GET ALL USERS :: ", err)
+		return nil, err
+	}
+
+	return users, nil
 }
