@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/gorilla/mux"
 	api "github.com/innvtseeds/wdic-server/internal/api/routes"
 	"github.com/innvtseeds/wdic-server/internal/config"
 
@@ -15,7 +16,8 @@ import (
 func main() {
 
 	// Set up routes from routes.go
-	api.SetupRoutes()
+	r := mux.NewRouter()
+	api.SetupRoutes(r)
 
 	config.LoadDBConfig()
 
@@ -30,8 +32,8 @@ func main() {
 	}
 
 	s := &http.Server{
-		Addr: ":" + port,
-		// Handler:        myHandler,
+		Addr:           ":" + port,
+		Handler:        r,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,

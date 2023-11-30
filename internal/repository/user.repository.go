@@ -124,13 +124,16 @@ func (r *UserRepository) GetAll(paginationValues *sharedDTO.PaginationStruct) ([
 	findOptions.SetSkip((paginationValues.Page - 1) * paginationValues.PageSize)
 	findOptions.SetLimit(paginationValues.PageSize)
 
+	var projection bson.M
+	projection = bson.M{"password": 0}
+
 	var where bson.M
 
 	if paginationValues.Search != "" {
 		where = bson.M{"email": paginationValues.Search}
 	}
 
-	cursor, err := r.collection.Find(context.Background(), where, findOptions)
+	cursor, err := r.collection.Find(context.Background(), where, findOptions.SetProjection(projection))
 	if err != nil {
 		log.Println("ERROR IN GET ALL USERS", err)
 		return nil, err

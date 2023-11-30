@@ -6,6 +6,8 @@ import (
 	"github.com/innvtseeds/wdic-server/internal/config"
 	userRepoDTO "github.com/innvtseeds/wdic-server/internal/dto/repository/user"
 	dto "github.com/innvtseeds/wdic-server/internal/dto/service/user"
+	sharedDto "github.com/innvtseeds/wdic-server/internal/dto/shared"
+
 	"github.com/innvtseeds/wdic-server/internal/model"
 	"github.com/innvtseeds/wdic-server/internal/repository"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -42,15 +44,15 @@ func CreateUserService(user *dto.UserCreate_RequestBody) (*model.User, error) {
 
 }
 
-func GetUser(userId primitive.ObjectID, email string) (*model.User, error) {
+func GetUser(options dto.GetUserOptions) (*model.User, error) {
 
-	if userId == primitive.NilObjectID && email == "" {
+	if options.UserID == primitive.NilObjectID && options.Email == "" {
 		return nil, errors.New("invalid args :: need either email or user id")
 	}
 
 	getUserDTO := userRepoDTO.GetUserArgsStruct{
-		Email: email,
-		Id:    userId,
+		Email: options.Email,
+		Id:    options.UserID,
 	}
 
 	searchedUser, err := repository.NewUserRepository(&config.DbConnection).Get(&getUserDTO)
@@ -60,4 +62,65 @@ func GetUser(userId primitive.ObjectID, email string) (*model.User, error) {
 	}
 
 	return searchedUser, nil
+}
+
+func GetUsers(pagination *sharedDto.PaginationStruct) ([]*model.User, error) {
+
+	users, err := repository.NewUserRepository(&config.DbConnection).GetAll(pagination)
+
+	if err != nil {
+		myLogger.Error("ERROR IN USER SERVICE :: GET ALL USERS :: ", err)
+		return nil, err
+	}
+
+	return users, nil
+}
+
+func DeleteUser(userId *primitive.ObjectID) (*string, error) {
+
+	repo := repository.NewUserRepository(&config.DbConnection)
+
+	dto := userRepoDTO.GetUserArgsStruct{
+		Id: *userId,
+	}
+	userVerify, err := repo.Get(&dto)
+	if err != nil {
+		return nil, err
+	}
+	if userVerify == nil {
+		return nil, errors.New("user not found")
+	}
+
+	response, err := repo.Delete(userId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return response, nil
+}
+
+func UpdateUser(userId *primitive.ObjectID, data *model.User) (*string, error) {
+
+	repo := repository.NewUserRepository(&config.DbConnection)
+
+	dto := userRepoDTO.GetUserArgsStruct{
+		Id: *userId,
+	}
+	userVerify, err := repo.Get(&dto)
+	if err != nil {
+		return nil, err
+	}
+	if userVerify == nil {
+		return nil, errors.New("user not found")
+	}
+
+	response, err := repo.Update(userId, data)
+
+	if err != nil {
+		myLogger.Error("ERROR IN UpdateUser in User Service :: repository response", err)
+		return nil, err
+	}
+
+	return response, nil
 }
