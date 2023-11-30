@@ -8,8 +8,11 @@ import (
 
 	"github.com/gorilla/mux"
 	userHandlerDTO "github.com/innvtseeds/wdic-server/internal/dto/handler/user"
+	dto "github.com/innvtseeds/wdic-server/internal/dto/service/user"
 	userServiceDTO "github.com/innvtseeds/wdic-server/internal/dto/service/user"
 	sharedDTO "github.com/innvtseeds/wdic-server/internal/dto/shared"
+	"github.com/innvtseeds/wdic-server/internal/model"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"github.com/innvtseeds/wdic-server/internal/service"
 	apiResponse "github.com/innvtseeds/wdic-server/library/standardization"
@@ -85,7 +88,71 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 	userId := vars["userId"]
 
-	myLogger.Info("USERID", userId)
+	objectID, err := primitive.ObjectIDFromHex(userId)
+	if err != nil {
+		apiResponse.RequestBodyError(w, "Object ID Conversion Failed")
+	}
 
-	apiResponse.StandardResponse(w, userId)
+	dto := dto.GetUserOptions{
+		UserID: objectID,
+	}
+	response, err := service.GetUser(dto)
+
+	if err != nil {
+		apiResponse.ServiceResponseError(w, err.Error())
+	}
+
+	apiResponse.StandardResponse(w, response)
+}
+
+func UpdateUser(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	userId := vars["userId"]
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "Error reading request body", http.StatusBadRequest)
+		return
+	}
+
+	objectID, err := primitive.ObjectIDFromHex(userId)
+	if err != nil {
+		apiResponse.RequestBodyError(w, "Object ID Conversion Failed")
+	}
+
+	var requestBody *model.User
+
+	// Unmarshal the JSON into the struct
+	err = json.Unmarshal(body, &requestBody)
+	if err != nil {
+		http.Error(w, "Error unmarshalling JSON", http.StatusBadRequest)
+		return
+	}
+
+	response, err := service.UpdateUser(&objectID, requestBody)
+	if err != nil {
+		apiResponse.ServiceResponseError(w, err.Error())
+	}
+
+	apiResponse.StandardResponse(w, response)
+
+}
+
+func DeleteUser(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	userId := vars["userId"]
+
+	objectID, err := primitive.ObjectIDFromHex(userId)
+	if err != nil {
+		apiResponse.RequestBodyError(w, "Object ID Conversion Failed")
+	}
+
+	response, err := service.DeleteUser(&objectID)
+
+	if err != nil {
+		apiResponse.ServiceResponseError(w, err.Error())
+	}
+
+	apiResponse.StandardResponse(w, response)
 }
